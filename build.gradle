@@ -1,0 +1,50 @@
+/*
+使用gradle分渠道打包的例子,全部打包使用命令assembleRelease即可,指定某个渠道打包使用(assemble渠道Release)即可
+*/
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.0.1"
+
+    signingConfigs {
+        myConfig {
+            storeFile file("gradle.keystore")
+            storePassword "xxxx"
+            keyAlias "gradle"
+            keyPassword "xxxx"
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.yhj.gradle"
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.myConfig
+        }
+    }
+
+    productFlavors {
+        wandoujia {
+        }
+        baidu {
+        }
+        c360 {
+        }
+
+        productFlavors.all {
+            flavor -> flavor.manifestPlaceholders = [channel_value:name]
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
